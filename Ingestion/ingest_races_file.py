@@ -1,4 +1,14 @@
 # Databricks notebook source
+# DBTITLE 1,Loading configurations
+# MAGIC %run "../includes/configurations"
+
+# COMMAND ----------
+
+# DBTITLE 1,Loading common functions
+# MAGIC %run "../includes/common_functions"
+
+# COMMAND ----------
+
 #import required datatypes
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DateType,DayTimeIntervalType
 
@@ -24,14 +34,14 @@ races_schema = StructType(
 races_df =  spark.read.format("csv") \
     .option("header", True) \
     .schema(races_schema) \
-    .load("/mnt/formula1dl7/raw/races.csv")
+    .load(f"{raw_folder_path}/races.csv")
 
 # COMMAND ----------
 
-# Selecting requried columns, changing column names, creating a timestamp column and adding ingestion_date
-from pyspark.sql.functions import to_timestamp, concat, col, lit, current_timestamp
+# Creating timestamp column, extracting required columns and renaming them
+from pyspark.sql.functions import to_timestamp, concat, col, lit
 
-races_final_df = races_df.select(
+races_selected_df = races_df.select(
     col("raceId").alias("race_id"),
     col("year").alias("race_year"),
     col("round"),
@@ -39,11 +49,14 @@ races_final_df = races_df.select(
     col("name"),
     to_timestamp(
         concat(col("date"), lit(" "), col("time")), "yyyy-MM-dd HH:mm:ss"
-    ).alias("race_timestamp"),
-    current_timestamp().alias('ingestion_date')
+    ).alias("race_timestamp")
 )
 
 # COMMAND ----------
 
+races_final_df=add_ingestion_date(races_selected_df)
+
+# COMMAND ----------
+
 #save file to adls
-races_final_df.write.mode("overwrite").parquet('/mnt/formula1dl7/processed/races')
+races_final_df.write.mode("overwrite").parquet("{processed_folder_path}/races")

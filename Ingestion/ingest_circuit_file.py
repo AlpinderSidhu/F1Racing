@@ -1,4 +1,14 @@
 # Databricks notebook source
+# DBTITLE 1,Loading Configurations
+# MAGIC %run "../includes/configurations"
+
+# COMMAND ----------
+
+# DBTITLE 1,Loading common functions
+# MAGIC %run "../includes/common_functions"
+
+# COMMAND ----------
+
 # Importing datatypes
 from pyspark.sql.types import StructField, StructType, IntegerType, DoubleType, StringType
 
@@ -23,7 +33,7 @@ circuits_schema = StructType(
 circuits_df = spark.read.format("csv") \
     .option("header", "true") \
     .schema(circuits_schema) \
-    .load("/mnt/formula1dl7/raw/circuits.csv")
+    .load(f"{raw_folder_path}/circuits.csv")
 
 # COMMAND ----------
 
@@ -43,10 +53,15 @@ circuits_renamed_df = circuits_selected_df.withColumnRenamed("circuitId", "circu
 # COMMAND ----------
 
 # Adding a ingestion date column
-from pyspark.sql.functions import current_timestamp
-circuits_final_df = circuits_renamed_df.withColumn("ingestion_date",current_timestamp())
+# from pyspark.sql.functions import current_timestamp
+# circuits_final_df = circuits_renamed_df.withColumn("ingestion_date",current_timestamp())
+circuits_final_df = add_ingestion_date(circuits_renamed_df)
 
 # COMMAND ----------
 
 # Writing data to ADLS as parquet
-circuits_final_df.write.mode("overwrite").parquet("/mnt/formula1dl7/processed/circuits")
+circuits_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circuits")
+
+# COMMAND ----------
+
+display(dbutils.fs.ls(f'{processed_folder_path}/circuits'))
