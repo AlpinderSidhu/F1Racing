@@ -9,6 +9,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Adding Widget to receive parameters
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 #Importing datatypes
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 
@@ -47,10 +53,20 @@ selected_qualifying_df = qualifying_df \
 
 # COMMAND ----------
 
-# Adding ingestion_date column
+# Adding ingestion_date and data_source column
 final_qualifying_df = add_ingestion_date(selected_qualifying_df)
+final_qualifying_df = add_datasource(final_qualifying_df,v_data_source)
 
 # COMMAND ----------
 
 # Writing to ADLS
 final_qualifying_df.write.mode("overwrite").parquet(f'{processed_folder_path}/qualifying/')
+
+# COMMAND ----------
+
+# Reading data from ADLS
+# spark.read.parquet(f'{processed_folder_path}/qualifying/').display()
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

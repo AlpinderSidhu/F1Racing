@@ -9,6 +9,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Adding Widget to receive parameters
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # Importing datatypes
 from pyspark.sql.types import (
     StructType,
@@ -77,8 +83,9 @@ selected_result_df = result_df.select(
 
 # COMMAND ----------
 
-# Adding ingestion date column
+# Adding ingestion_date and data_source column
 final_result_df = add_ingestion_date(selected_result_df)
+final_result_df = add_datasource(final_result_df,v_data_source)
 
 # COMMAND ----------
 
@@ -87,12 +94,9 @@ final_result_df.write.parquet(f'{processed_folder_path}/results', mode= "overwri
 
 # COMMAND ----------
 
-spark.read.parquet(f'{processed_folder_path}/results').display()
+# Read file to adls
+spark.read.parquet(f'{processed_folder_path}/results').display()    
 
 # COMMAND ----------
 
-spark.read.parquet(f'{processed_folder_path}/results').count()
-
-# COMMAND ----------
-
-
+dbutils.notebook.exit("Success")

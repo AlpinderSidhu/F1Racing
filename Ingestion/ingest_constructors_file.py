@@ -9,6 +9,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Adding Widget to receive parameters
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # import datatypes
 from pyspark.sql.types import StructType,StructField,StringType,IntegerType
 
@@ -45,10 +51,20 @@ constructors_renamed_df = constructors_df.select(
 
 # COMMAND ----------
 
-# Adding a ingestion date column
+# Adding ingestion_date and data_source column
 constructors_final_df = add_ingestion_date(constructors_renamed_df)
+constructors_final_df = add_datasource(constructors_final_df,v_data_source)
 
 # COMMAND ----------
 
 # Write File
 constructors_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/constructors/")
+
+# COMMAND ----------
+
+# Read File
+# display(spark.read.parquet(f"{processed_folder_path}/constructors/"))
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

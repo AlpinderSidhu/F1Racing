@@ -9,6 +9,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Adding Widget to receive parameters
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # Importing datatypes
 from pyspark.sql.types import StructField, StructType, IntegerType, DoubleType, StringType
 
@@ -43,19 +49,19 @@ circuits_selected_df = circuits_df.drop("url")
 # COMMAND ----------
 
 # Renaming columns
+from pyspark.sql.functions import lit
 circuits_renamed_df = circuits_selected_df.withColumnRenamed("circuitId", "circuit_id") \
     .withColumnRenamed("circuitRef", "circuit_ref") \
     .withColumnRenamed("lat", "latitude") \
     .withColumnRenamed("lng", "longitude") \
-    .withColumnRenamed("alt", "altitude") 
+    .withColumnRenamed("alt", "altitude")
 
 
 # COMMAND ----------
 
-# Adding a ingestion date column
-# from pyspark.sql.functions import current_timestamp
-# circuits_final_df = circuits_renamed_df.withColumn("ingestion_date",current_timestamp())
+# Adding ingestion_date and data_source column
 circuits_final_df = add_ingestion_date(circuits_renamed_df)
+circuits_final_df = add_datasource(circuits_final_df,v_data_source)
 
 # COMMAND ----------
 
@@ -64,4 +70,4 @@ circuits_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circ
 
 # COMMAND ----------
 
-display(dbutils.fs.ls(f'{processed_folder_path}/circuits'))
+dbutils.notebook.exit("Success")

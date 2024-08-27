@@ -9,6 +9,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Adding Widget to receive parameters
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # Import Datatypes
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DateType
 
@@ -56,10 +62,20 @@ drivers_selected_df = drivers_df.select(
 
 # COMMAND ----------
 
-# Adding a ingestion date column
+# Adding ingestion_date and data_source column
 drivers_final_df = add_ingestion_date(drivers_selected_df)
+drivers_final_df = add_datasource(drivers_final_df,v_data_source)
 
 # COMMAND ----------
 
 # Write the output to the Adls
 drivers_final_df.write.parquet(f"{processed_folder_path}/drivers/", "overwrite")
+
+# COMMAND ----------
+
+# Reading the output
+# spark.read.parquet(f"{processed_folder_path}/drivers/").display()
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

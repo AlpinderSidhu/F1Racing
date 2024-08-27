@@ -9,6 +9,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Adding Widget to receive parameters
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 #import required datatypes
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DateType,DayTimeIntervalType
 
@@ -54,9 +60,20 @@ races_selected_df = races_df.select(
 
 # COMMAND ----------
 
-races_final_df=add_ingestion_date(races_selected_df)
+# Adding ingestion_date and data_source column
+races_final_df =add_ingestion_date(races_selected_df)
+races_final_df = add_datasource(races_final_df,v_data_source)
 
 # COMMAND ----------
 
 #save file to adls
-races_final_df.write.mode("overwrite").parquet("{processed_folder_path}/races")
+races_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/races")
+
+# COMMAND ----------
+
+# Reading data from ADLS
+# spark.read.parquet(f"{processed_folder_path}/races").display()
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")
