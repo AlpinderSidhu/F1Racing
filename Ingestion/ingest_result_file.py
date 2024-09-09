@@ -90,12 +90,10 @@ final_result_df = add_datasource(final_result_df,v_data_source)
 # COMMAND ----------
 
 # Save file to adls
-final_result_df.write.parquet(f'{processed_folder_path}/results', mode= "overwrite", partitionBy = "race_id")
+# final_result_df.write.parquet(f'{processed_folder_path}/results', mode= "overwrite", partitionBy = "race_id")
 
-# COMMAND ----------
-
-# Read file to adls
-spark.read.parquet(f'{processed_folder_path}/results').display()    
+# Save to Managed Table
+final_result_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.results", partitionBy = "race_id")
 
 # COMMAND ----------
 

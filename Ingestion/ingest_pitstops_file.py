@@ -55,12 +55,10 @@ final_pit_stops_df = add_datasource(final_pit_stops_df,v_data_source)
 # COMMAND ----------
 
 # Writing data in ADLS
-final_pit_stops_df.write.mode("overwrite").parquet( processed_folder_path + "/pit_stops")
+# final_pit_stops_df.write.mode("overwrite").parquet( processed_folder_path + "/pit_stops")
 
-# COMMAND ----------
-
-# Reading data from ADLS
-display(spark.read.parquet(processed_folder_path + "/pit_stops"))
+# Writing to managed table
+final_pit_stops_df.write.mode("overwrite").format("parquet").saveAsTable( "f1_processed.pit_stops")
 
 # COMMAND ----------
 

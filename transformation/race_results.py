@@ -40,12 +40,12 @@ final_df = (
         current_timestamp().alias("created_date"),
     )
 )
-df1.filter(
-    (df1["race_year"] == "2020") & (df1["race_name"] == "Abu Dhabi Grand Prix")
-).display()
 
 
 # COMMAND ----------
 
 # Writing data to the presentation layer
-final_df.write.mode("overwrite").parquet(f"{presentation_folder_path}/race_results/")
+# final_df.write.mode("overwrite").parquet(f"{presentation_folder_path}/race_results/")
+
+# Writing to managed table
+final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_presentation.race_results")

@@ -60,12 +60,10 @@ final_qualifying_df = add_datasource(final_qualifying_df,v_data_source)
 # COMMAND ----------
 
 # Writing to ADLS
-final_qualifying_df.write.mode("overwrite").parquet(f'{processed_folder_path}/qualifying/')
+# final_qualifying_df.write.mode("overwrite").parquet(f'{processed_folder_path}/qualifying/')
 
-# COMMAND ----------
-
-# Reading data from ADLS
-# spark.read.parquet(f'{processed_folder_path}/qualifying/').display()
+# Writing to Managed Table
+final_qualifying_df.write.mode("overwrite").format("parquet").saveAsTable('f1_processed.qualifying')
 
 # COMMAND ----------
 

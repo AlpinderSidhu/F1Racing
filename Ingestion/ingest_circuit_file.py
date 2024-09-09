@@ -66,7 +66,10 @@ circuits_final_df = add_datasource(circuits_final_df,v_data_source)
 # COMMAND ----------
 
 # Writing data to ADLS as parquet
-circuits_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circuits")
+# circuits_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circuits")
+
+# Creating Table
+circuits_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.circuits")
 
 # COMMAND ----------
 

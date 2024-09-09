@@ -45,12 +45,11 @@ lap_times_final_df = add_datasource(lap_times_final_df,v_data_source)
 # COMMAND ----------
 
 # Writing to ADLS
-lap_times_final_df.write.mode('overwrite').parquet(processed_folder_path+"/lap_times/")
+# lap_times_final_df.write.mode('overwrite').parquet(processed_folder_path+"/lap_times/")
 
-# COMMAND ----------
 
-# Reading from ADLS
-# display(spark.read.parquet(processed_folder_path+"/lap_times/"))
+# Writing to Managed Table
+lap_times_final_df.write.mode('overwrite').format("parquet").saveAsTable("f1_processed.lap_times")
 
 # COMMAND ----------
 

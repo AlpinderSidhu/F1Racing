@@ -19,11 +19,3 @@ for file in files:
         print("Failed to run " + file)
         break
     print("Completed " + file)
-
-# COMMAND ----------
-
-display(dbutils.fs.ls('dbfs:/mnt/formula1dl7/'))
-
-# COMMAND ----------
-
-

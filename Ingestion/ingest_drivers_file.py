@@ -69,12 +69,10 @@ drivers_final_df = add_datasource(drivers_final_df,v_data_source)
 # COMMAND ----------
 
 # Write the output to the Adls
-drivers_final_df.write.parquet(f"{processed_folder_path}/drivers/", "overwrite")
+# drivers_final_df.write.parquet(f"{processed_folder_path}/drivers/", "overwrite")
 
-# COMMAND ----------
-
-# Reading the output
-# spark.read.parquet(f"{processed_folder_path}/drivers/").display()
+# Writing to a managed Table
+drivers_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.drivers")
 
 # COMMAND ----------
 

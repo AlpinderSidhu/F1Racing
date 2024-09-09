@@ -67,12 +67,10 @@ races_final_df = add_datasource(races_final_df,v_data_source)
 # COMMAND ----------
 
 #save file to adls
-races_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/races")
+# races_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/races")
 
-# COMMAND ----------
-
-# Reading data from ADLS
-# spark.read.parquet(f"{processed_folder_path}/races").display()
+# Writing to Managed Table
+races_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.races")
 
 # COMMAND ----------
 
